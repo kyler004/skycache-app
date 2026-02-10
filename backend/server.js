@@ -5,6 +5,12 @@ import dotenv from 'dotenv';
 import helmet from 'helmet'; 
 import morgan from 'morgan';
 
+// Database connection
+import connectDB from './db.js'; 
+
+// Routes imports
+import searchRoutes from './routes/search.js'; 
+
 // Load variables from the .env file
 dotenv.config(); 
 
@@ -17,6 +23,8 @@ app.use(helmet());          // Security headers
 app.use(morgan('dev'));     // Logging request in terminal
 app.use(cors());            // Allows frontend to call backend
 app.use(express.json());    // Parses JSON request bodies
+
+connectDB();
 
 // Base route
 app.get('/', (req, res) => {
