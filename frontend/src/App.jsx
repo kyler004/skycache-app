@@ -1,136 +1,197 @@
 import React from "react";
+import {
+  Search,
+  Cloud,
+  Droplets,
+  Wind,
+  Thermometer,
+  CloudRain,
+  MapPin,
+} from "lucide-react";
 import { useWeather } from "./hooks/useWeather";
 import { getWeatherIconUrl } from "./utils/weatherIcon";
 
-function App() {
+export default function WeatherApp() {
   const { city, setCity, weather, loading, error, recentSearches } =
     useWeather();
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // fetchWeather is triggered automatically by the hook when 'city' changes
+    // But if we want it to trigger only on button click, we'd need to adjust the hook.
+    // Given the current hook implementation, it's debounced on input change.
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950 p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-10">
-          SkyCache Weather
-        </h1>
-
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-12">
-          <input
-            type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Search for a city... (e.g. Yaoundé)"
-            className="w-full px-5 py-4 rounded-full shadow-lg border border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+    <div className="min-h-screen bg-linear-to-br from-gray-900/40 via-gray-800/40 to-gray-900/40 flex items-center justify-center p-8">
+      <div className="flex gap-8 max-w-7xl w-full">
+        {/* Main Weather Card */}
+        <div className="relative w-2/3 h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+          {/* Background Image - Dynamic based on weather if possible, but keeping current default */}
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1585377776757-396916bea17f?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+            }}
           />
-        </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Weather Card */}
-          <div className="md:col-span-2">
-            {loading && (
-              <div className="text-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-300">
-                  Loading weather...
-                </p>
+          {/* Overlay linear */}
+          <div className="absolute inset-0 bg-linear-to-br from-teal-700/40 via-cyan-600/30 to-slate-600/40" />
+
+          {/* Content */}
+          <div className="relative h-full flex flex-col justify-between p-10">
+            {/* Logo */}
+            <div className="flex justify-between items-start">
+              <div className="text-white text-sm font-light tracking-wider flex items-center gap-2">
+                <CloudRain className="w-5 h-5" />
+                SKYCACHE
               </div>
-            )}
+              {loading && (
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              )}
+            </div>
 
-            {error && (
-              <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-300 px-6 py-4 rounded-lg text-center">
-                {error}
-              </div>
-            )}
-
-            {weather && !loading && !error && (
-              <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 transition-all hover:scale-[1.02]">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
-                      {weather.city}, {weather.country}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-300 capitalize">
-                      {weather.description}
-                    </p>
-                  </div>
+            {/* Weather Display */}
+            {weather ? (
+              <div className="text-white">
+                <div className="flex items-start gap-4 mb-2">
+                  <h1 className="text-[120px] font-light leading-none tracking-tight">
+                    {weather.temp}°
+                  </h1>
                   <img
                     src={getWeatherIconUrl(weather.icon)}
                     alt={weather.description}
-                    className="w-24 h-24"
+                    className="w-24 h-24 mt-4"
                   />
                 </div>
-
-                <div className="text-6xl font-bold text-gray-900 dark:text-white mb-6">
-                  {weather.temp}°C
+                <div className="flex items-center gap-3 mb-1">
+                  <h2 className="text-4xl font-light">{weather.city}</h2>
+                  <span className="text-xl font-thin opacity-60">
+                    | {weather.country}
+                  </span>
                 </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Feels like
-                    </p>
-                    <p className="text-xl font-semibold">
-                      {weather.feels_like}°C
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Humidity
-                    </p>
-                    <p className="text-xl font-semibold">{weather.humidity}%</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Wind
-                    </p>
-                    <p className="text-xl font-semibold">
-                      {weather.wind_speed} m/s
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Updated
-                    </p>
-                    <p className="text-sm">
-                      {new Date(weather.timestamp).toLocaleTimeString()}
-                    </p>
-                  </div>
-                </div>
+                <p className="text-sm font-light opacity-80">
+                  {new Date(weather.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  -{" "}
+                  {new Date(weather.timestamp).toLocaleDateString([], {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "short",
+                    year: "2-digit",
+                  })}
+                </p>
+                <p className="text-lg font-light mt-1 capitalize">
+                  {weather.description}
+                </p>
               </div>
-            )}
-
-            {!weather && !loading && !error && (
-              <div className="text-center py-20 text-gray-500 dark:text-gray-400">
-                Enter a city to see the weather ✨
+            ) : error ? (
+              <div className="text-white bg-red-500/20 backdrop-blur-md p-6 rounded-2xl border border-red-500/50">
+                <h3 className="text-xl font-medium mb-2">Oops!</h3>
+                <p className="opacity-90">{error}</p>
+              </div>
+            ) : (
+              <div className="text-white">
+                <h1 className="text-6xl font-thin leading-tight">
+                  Discover
+                  <br />
+                  Your Weather
+                </h1>
+                <p className="mt-4 text-xl font-light opacity-70">
+                  Search for any city to see current conditions...
+                </p>
               </div>
             )}
           </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-1/3 flex flex-col gap-6">
+          {/* Search Box */}
+          <form onSubmit={handleSearch} className="relative">
+            <input
+              type="text"
+              placeholder="Search for a city..."
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full bg-gray-800/50 backdrop-blur-md text-gray-200 placeholder-gray-500 px-6 py-4 rounded-2xl border border-gray-700/50 focus:outline-none focus:border-teal-500/50 transition-all shadow-lg"
+            />
+            <button
+              type="button"
+              onClick={() => setCity(city)} // Just re-trigger if needed, though hook handles it
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-teal-600/80 hover:bg-teal-600 p-3 rounded-xl transition-colors shadow-inner"
+            >
+              <Search className="w-5 h-5 text-white" />
+            </button>
+          </form>
 
           {/* Recent Searches Sidebar */}
-          <div className="bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-xl p-6 h-fit">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+          <div className="bg-gray-800/30 backdrop-blur-md rounded-3xl p-6 border border-gray-700/30 flex-1 overflow-hidden flex flex-col">
+            <h3 className="text-white text-lg font-light mb-4 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-teal-400" />
               Recent Searches
             </h3>
-            {recentSearches.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
-                No searches yet
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {recentSearches.map((log) => (
-                  <li key={log._id}>
-                    <button
-                      onClick={() => setCity(log.city)}
-                      className="w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition"
-                    >
-                      {log.city} •{" "}
-                      {new Date(log.timestamp).toLocaleDateString()}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar">
+              {recentSearches.length === 0 ? (
+                <p className="text-gray-500 text-sm italic px-4">
+                  No recent searches yet
+                </p>
+              ) : (
+                recentSearches.map((log) => (
+                  <button
+                    key={log._id}
+                    onClick={() => setCity(log.city)}
+                    className="w-full text-left px-6 py-4 text-gray-400 hover:text-white hover:bg-teal-600/20 rounded-2xl transition-all duration-200 border border-transparent hover:border-teal-500/30 group"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-light">{log.city}</span>
+                      <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
+                        {new Date(log.timestamp).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+
+            {/* Weather Details (Only if weather available) */}
+            {weather && (
+              <div className="mt-8 pt-6 border-t border-gray-700/50">
+                <h3 className="text-white text-lg font-light mb-6">
+                  Weather Details
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-3">
+                      <Thermometer className="w-4 h-4 text-orange-400" />
+                      <span className="text-gray-400 text-sm">Feels like</span>
+                    </div>
+                    <span className="text-white font-light">
+                      {weather.feels_like}°
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-3">
+                      <Droplets className="w-4 h-4 text-blue-400" />
+                      <span className="text-gray-400 text-sm">Humidity</span>
+                    </div>
+                    <span className="text-white font-light">
+                      {weather.humidity}%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-3">
+                      <Wind className="w-4 h-4 text-teal-300" />
+                      <span className="text-gray-400 text-sm">Wind</span>
+                    </div>
+                    <span className="text-white font-light">
+                      {weather.wind_speed} m/s
+                    </span>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -138,5 +199,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
