@@ -11,6 +11,17 @@ import {
 import { useWeather } from "./hooks/useWeather";
 import { getWeatherIconUrl } from "./utils/weatherIcon";
 
+const backgroundImages = {
+  Rainy:
+    "https://images.unsplash.com/photo-1585377776757-396916bea17f?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  Sunny:
+    "https://images.unsplash.com/photo-1541119638723-c51cbe2262aa?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  Cloudy:
+    "https://images.unsplash.com/photo-1541119638723-c51cbe2262aa?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  Snowy:
+    "https://images.unsplash.com/photo-1541119638723-c51cbe2262aa?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+};
+
 export default function WeatherApp() {
   const {
     city,
@@ -29,16 +40,38 @@ export default function WeatherApp() {
     // Given the current hook implementation, it's debounced on input change.
   };
 
+  const getBackgroundImage = () => {
+    if (!weather) return backgroundImages.Cloudy; // Default
+
+    const iconCode = weather.icon.substring(0, 2);
+    switch (iconCode) {
+      case "01": // Clear sky
+        return backgroundImages.Sunny;
+      case "09": // Rain
+      case "10": // Rain
+      case "11": // Thunderstorm
+        return backgroundImages.Rainy;
+      case "13": // Snow
+        return backgroundImages.Snowy;
+      case "02": // Few clouds
+      case "03": // Scattered clouds
+      case "04": // Broken clouds
+      case "50": // Mist
+      default:
+        return backgroundImages.Cloudy;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900/40 via-gray-800/40 to-gray-900/40 flex items-center justify-center p-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900/40 flex items-center justify-center p-8">
       <div className="flex gap-8 max-w-7xl w-full">
         {/* Main Weather Card */}
         <div className="relative w-2/3 h-[600px] rounded-3xl overflow-hidden shadow-2xl">
-          {/* Background Image - Dynamic based on weather if possible, but keeping current default */}
+          {/* Background Image - Dynamic based on weather */}
           <div
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1585377776757-396916bea17f?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+              backgroundImage: `url('${getBackgroundImage()}')`,
             }}
           />
 
