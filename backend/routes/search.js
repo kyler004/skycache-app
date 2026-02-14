@@ -1,9 +1,14 @@
-import express from 'express'; 
-import { logSearch, getLogs } from '../controllers/searchController.js'; 
+import express from "express";
+import {
+  logSearch,
+  getLogs,
+  deleteAllLogs,
+} from "../controllers/searchController.js";
 
-const router = express.Router(); 
+const router = express.Router();
 
-router.post('/log', logSearch); 
-router.get('/logs', getLogs); 
+router.post("/log", logSearch);
+router.get("/logs", getLogs);
+router.delete("/", deleteAllLogs);
 
-export default router; 
+export default router;

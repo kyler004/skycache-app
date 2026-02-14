@@ -12,8 +12,15 @@ import { useWeather } from "./hooks/useWeather";
 import { getWeatherIconUrl } from "./utils/weatherIcon";
 
 export default function WeatherApp() {
-  const { city, setCity, weather, loading, error, recentSearches } =
-    useWeather();
+  const {
+    city,
+    setCity,
+    weather,
+    loading,
+    error,
+    recentSearches,
+    clearHistory,
+  } = useWeather();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -129,11 +136,22 @@ export default function WeatherApp() {
 
           {/* Recent Searches Sidebar */}
           <div className="bg-gray-800/30 backdrop-blur-md rounded-3xl p-6 border border-gray-700/30 flex-1 overflow-hidden flex flex-col">
-            <h3 className="text-white text-lg font-light mb-4 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-teal-400" />
-              Recent Searches
-            </h3>
-            <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-white text-lg font-light flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-teal-400" />
+                Recent Searches
+              </h3>
+              {recentSearches.length > 0 && (
+                <button
+                  onClick={clearHistory}
+                  className="text-[10px] text-gray-500 hover:text-red-400 uppercase tracking-widest transition-colors font-medium bg-gray-900/40 px-3 py-1.5 rounded-lg border border-gray-700/30 active:scale-95"
+                >
+                  Empty History
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-2 overflow-y-auto max-h-[250px] pr-2 custom-scrollbar">
               {recentSearches.length === 0 ? (
                 <p className="text-gray-500 text-sm italic px-4">
                   No recent searches yet

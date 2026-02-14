@@ -20,9 +20,18 @@ export const useWeather = () => {
   const fetchRecentSearches = async () => {
     try {
       const res = await axios.get(`${API_BASE}/search/logs`);
-      setRecentSearches(res.data.slice(0, 10)); // last 10
+      setRecentSearches(res.data); // Removed slice to support scrollable list
     } catch (err) {
       console.error("Failed to load recent searches", err);
+    }
+  };
+
+  const clearHistory = async () => {
+    try {
+      await axios.delete(`${API_BASE}/search`);
+      setRecentSearches([]);
+    } catch (err) {
+      console.error("Failed to clear history", err);
     }
   };
 
@@ -62,5 +71,6 @@ export const useWeather = () => {
     loading,
     error,
     recentSearches,
+    clearHistory,
   };
 };

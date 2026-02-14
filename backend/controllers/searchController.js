@@ -15,8 +15,17 @@ export const logSearch = async (req, res) => {
 
 export const getLogs = async (req, res) => {
   try {
-    const logs = await SearchLog.find();
+    const logs = await SearchLog.find().sort({ timestamp: -1 }); // Added sort for better UI
     res.json(logs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteAllLogs = async (req, res) => {
+  try {
+    await SearchLog.deleteMany({});
+    res.status(200).json({ message: "Search history cleared successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
